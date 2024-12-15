@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Webpage</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            overflow: hidden;
+        }
+        .navbar {
+            display: flex;
+            justify-content: space-around;
+            background-color: #333;
+            padding: 1rem;
+        }
+
+        .navbar a {
+            color: white;
+            text-decoration: none;
+            font-size: 1.2rem;
+            transition: color 0.3s;
+        }
+
+        .navbar a:hover {
+            color: #00aced;
+        }
+
+        canvas {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <div class="navbar">
+        <a href="https://www.baidu.com">30MFF</a>
+        <a href="https://zv2029.github.io/Pusheen_Lore/index.html">Comic</a>
+        <a href="https://aleks4ndrr.github.io/sound-project/">Audio</a>
+        <a href="https://healoon.github.io/Video-Group-4/">Video</a>
+    </div>
+
+    <!-- Canvas Section -->
+    <canvas id="interactiveCanvas"></canvas>
+
+    <script>
+        const canvas = document.getElementById('interactiveCanvas');
+        const ctx = canvas.getContext('2d');
+
+        // Define frames and covers
+        let frames = [];
+
+        // Resize canvas to fit window
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight - document.querySelector('.navbar').offsetHeight;
+            adjustFrames();
+            draw();
+        }
+
+        function adjustFrames() {
+            const canvasWidth = canvas.width;
+            const canvasHeight = canvas.height;
+
+            const frameWidth = canvasWidth / 2;
+            const frameHeight = canvasHeight / 2;
+
+            frames = [
+                { x: 0, y: 0, width: frameWidth, height: frameHeight, color: 'lightgreen', image: 'qinglian.jpeg', link: 'https://example1.com', revealed: false },
+                { x: frameWidth, y: 0, width: frameWidth, height: frameHeight, color: 'lightblue', image: 'w2.png', link: 'https://zv2029.github.io/Pusheen_Lore/index.html', revealed: false },
+                { x: 0, y: frameHeight, width: frameWidth, height: frameHeight, color: 'lightcoral', image: 'w3.png', link: 'https://aleks4ndrr.github.io/sound-project/', revealed: false },
+                { x: frameWidth, y: frameHeight, width: frameWidth, height: frameHeight, color: 'lightgoldenrodyellow', image: 'w4.png', link: 'https://healoon.github.io/Video-Group-4/', revealed: false }
+            ];
+        }
+
+        // Draw frames
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            frames.forEach(frame => {
+                // Draw image if revealed
+                if (frame.revealed) {
+                    const img = new Image();
+                    img.src = frame.image;
+                    img.onload = () => {
+                        ctx.drawImage(img, frame.x, frame.y, frame.width, frame.height);
+                    };
+                } else {
+                    // Draw cover
+                    ctx.fillStyle = frame.color;
+                    ctx.fillRect(frame.x, frame.y, frame.width, frame.height);
+                }
+
+                // Draw border
+                ctx.strokeStyle = 'black';
+                ctx.lineWidth = 2;
+                ctx.strokeRect(frame.x, frame.y, frame.width, frame.height);
+            });
+        }
+
+        // Handle click events
+        canvas.addEventListener('click', (event) => {
+            const rect = canvas.getBoundingClientRect();
+            const mouseX = event.clientX - rect.left;
+            const mouseY = event.clientY - rect.top;
+
+            frames.forEach(frame => {
+                if (
+                    mouseX >= frame.x &&
+                    mouseX <= frame.x + frame.width &&
+                    mouseY >= frame.y &&
+                    mouseY <= frame.y + frame.height
+                ) {
+                    if (!frame.revealed) {
+                        frame.revealed = true;
+                        draw();
+                    } else {
+                        window.open(frame.link, '_blank');
+                    }
+                }
+            });
+        });
+
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+    </script>
+</body>
+</html>
